@@ -1,20 +1,27 @@
-# Usa una imagen oficial de Node.js
-FROM node:22.14.0-alpine
+# Etapa 1: Build con Node
+FROM node:22.1.0-alpine AS build
 
-# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos de dependencias
-COPY package.json package-lock.json* ./
-
-# Instala dependencias
+COPY package*.json ./
 RUN npm install
 
-# Copia el resto del código
+RUN npm install --global vite
+
 COPY . .
+RUN npm run build
 
-# Exponer el puerto de Vite (modo desarrollo)
-EXPOSE 5173
+# Etapa 2: Servir con Nginx
+FROM nginx:1.25.4-alpine
 
-# Iniciar Vite en desarrollo
-CMD ["npm", "run", "dev", "--", "--host"]
+# Copiar el build al html público de nginx
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Configuración personalizada de nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+
+
