@@ -1,50 +1,274 @@
-import React from "react";
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Slide, Fade } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  IconButton,
+  Slide,
+  Fade,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import {
+  obtenerTotalBodegas,
+  obtenerTotalLocales,
+  obtenerTotalProductos,
+  obtenerTotalSurtidos,
+  obtenerTopProductos,
+  obtenerSurtidosConProductos,
+} from "../services/ApiServices";
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      {/* Navbar con animación de entrada */}
-      <Slide in={true} direction="down" timeout={500}>
-        <AppBar position="static">
-          <Toolbar>
-            {/* Icono de Usuario a la Izquierda */}
-            <IconButton edge="start" color="inherit" aria-label="user" sx={{ mr: 2 }}>
-              <AccountCircleIcon />
-            </IconButton>
+  const [resumen, setResumen] = useState({
+    bodegas: 0,
+    locales: 0,
+    productos: 0,
+    surtidos: 0,
+  });
 
-            {/* Título */}
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              Panel de Control
+  const [topProductos, setTopProductos] = useState([]);
+  const [surtidosRecientes, setSurtidosRecientes] = useState([]);
+
+  const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1"];
+
+  useEffect(() => {
+    const fetchResumen = async () => {
+      try {
+        const [prod, bod, loc, sur] = await Promise.all([
+          obtenerTotalProductos(),
+          obtenerTotalBodegas(),
+          obtenerTotalLocales(),
+          obtenerTotalSurtidos(),
+        ]);
+        setResumen({
+          productos: prod,
+          bodegas: bod,
+          locales: loc,
+          surtidos: sur,
+        });
+      } catch (error) {
+        console.error("Error en resumen:", error);
+      }
+    };
+
+    const fetchTopProductos = async () => {
+      try {
+        const data = await obtenerTopProductos();
+        setTopProductos(data);
+      } catch (error) {
+        console.error("Error al obtener productos top:", error);
+      }
+    };
+
+    const fetchSurtidos = async () => {
+      try {
+        const surtidos = await obtenerSurtidosConProductos();
+        setSurtidosRecientes(surtidos);
+      } catch (error) {
+        console.error("Error al obtener surtidos recientes:", error);
+      }
+    };
+
+    fetchResumen();
+    fetchTopProductos();
+    fetchSurtidos();
+  }, []);
+
+  const precioPromedio =
+      topProductos.length > 0
+          ? topProductos.reduce((sum, p) => sum + p.precio, 0) / topProductos.length
+          : 0;
+
+  const productoMasCaro = topProductos.reduce(
+      (max, prod) => (prod.precio > (max?.precio || 0) ? prod : max),
+      null
+  );
+
+  const productoMasBarato = topProductos.reduce(
+      (min, prod) => (prod.precio < (min?.precio ?? Infinity) ? prod : min),
+      null
+  );
+
+  return (
+      <Box sx={{ flexGrow: 1 }}>
+        <Slide in={true} direction="down" timeout={500}>
+          <AppBar position="static">
+            <Toolbar>
+              <IconButton edge="start" color="inherit" aria-label="user" sx={{ mr: 2 }}>
+                <AccountCircleIcon />
+              </IconButton>
+              <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                Panel de Control
+              </Typography>
+              <Button color="inherit" onClick={() => navigate("/bodegas")}>Bodegas</Button>
+              <Button color="inherit" onClick={() => navigate("/locales")}>Locales</Button>
+              <Button color="inherit" onClick={() => navigate("/productos")}>Productos</Button>
+              <Button color="inherit" onClick={() => navigate("/surtidos")}>Surtidos</Button>
+            </Toolbar>
+          </AppBar>
+        </Slide>
+
+        <Fade in={true} timeout={800}>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h4" gutterBottom>
+              Bienvenido al Dashboard
             </Typography>
 
-            {/* Opciones del menú alineadas a la derecha */}
-            <Button color="inherit" onClick={() => navigate("/inventario")}>
-              Inventario
-            </Button>
-            <Button color="inherit">Facturación</Button>
-            <Button color="inherit">Clientes</Button>
-            <Button color="inherit" onClick={() => navigate("/local")}>
-              Local
-            </Button>
-          </Toolbar>
-        </AppBar>
-      </Slide>
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+              {["Productos", "Bodegas", "Locales", "Surtidos"].map((label, idx) => (
+                  <Grid item xs={12} sm={6} md={3} key={label}>
+                    <Paper elevation={3} sx={{ p: 2, textAlign: "center" }}>
+                      <Typography variant="h6">{label}</Typography>
+                      <Typography variant="h4" color="primary">
+                        {Object.values(resumen)[idx]}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+              ))}
+            </Grid>
 
-      {/* Contenido de la Página con efecto Fade */}
-      <Fade in={true} timeout={800}>
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">Bienvenido al Dashboard</Typography>
-          <Typography variant="body1" sx={{ mt: 2 }}>
-            Aquí puedes gestionar tu inventario, facturación, clientes y opciones del local.
-          </Typography>
-        </Box>
-      </Fade>
-    </Box>
+            <Grid container spacing={3} sx={{ mt: 1, mb: 3 }}>
+              <Grid item xs={12} md={6}>
+                <Paper sx={{ p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Precios por Producto (Barras)
+                  </Typography>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={topProductos}>
+                      <XAxis dataKey="nombre" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="precio" fill="#1976d2" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Paper sx={{ p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Proporción de Precios (Pastel)
+                  </Typography>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                          data={topProductos}
+                          dataKey="precio"
+                          nameKey="nombre"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          label
+                      >
+                        {topProductos.map((_, index) => (
+                            <Cell key={index} fill={colors[index % colors.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </Paper>
+              </Grid>
+            </Grid>
+
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="subtitle1">
+                💸 <strong>Precio promedio:</strong> ${precioPromedio.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </Typography>
+              {productoMasCaro && (
+                  <Typography variant="subtitle1">
+                    🔺 <strong>Producto más caro:</strong> {productoMasCaro.nombre} (${productoMasCaro.precio.toLocaleString()})
+                  </Typography>
+              )}
+              {productoMasBarato && (
+                  <Typography variant="subtitle1">
+                    🔻 <strong>Producto más barato:</strong> {productoMasBarato.nombre} (${productoMasBarato.precio.toLocaleString()})
+                  </Typography>
+              )}
+            </Box>
+
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Paper elevation={2} sx={{ p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Últimos Productos Añadidos
+                  </Typography>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>ID</TableCell>
+                        <TableCell>Nombre</TableCell>
+                        <TableCell>Precio</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {topProductos.map((prod) => (
+                          <TableRow key={prod.id}>
+                            <TableCell>{prod.id}</TableCell>
+                            <TableCell>{prod.nombre}</TableCell>
+                            <TableCell>${prod.precio.toLocaleString()}</TableCell>
+                          </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Paper elevation={2} sx={{ p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Últimos Surtidos
+                  </Typography>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>ID Surtido</TableCell>
+                        <TableCell>Producto</TableCell>
+                        <TableCell>Cantidad</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {surtidosRecientes.map((s, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{s.id}</TableCell>
+                            <TableCell>{s.producto}</TableCell>
+                            <TableCell>{s.cantidad}</TableCell>
+                          </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Box>
+        </Fade>
+      </Box>
   );
 };
 
