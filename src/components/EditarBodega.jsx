@@ -220,7 +220,7 @@ const EditarBodega = () => {
                                                 "&:hover": { backgroundColor: "#bbdefb" },
                                             }}
                                             onClick={() =>
-                                                navigate(/secciones/${seccion.id}, {
+                                                navigate(`/secciones/${seccion.id}`, {
                                                 state: { seccion },
                                             })
                                             }

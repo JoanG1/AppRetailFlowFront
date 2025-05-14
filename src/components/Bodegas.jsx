@@ -49,7 +49,7 @@ const Bodegas = () => {
             setMensaje("✅ ¡Bodega creada exitosamente sin secciones!");
             resetFormulario();
         } catch (error) {
-            setMensaje(❌ Error: ${error});
+            setMensaje(`❌ Error: ${error}`);
         }
     };
 
@@ -64,7 +64,7 @@ const Bodegas = () => {
             setMensaje("✅ ¡Bodega creada exitosamente con secciones asignadas!");
             resetFormulario();
         } catch (error) {
-            setMensaje(❌ Error: ${error});
+            setMensaje(`❌ Error: ${error}`);
         }
     };
 
