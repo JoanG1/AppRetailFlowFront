@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // URL base de la API
-const API_URL ="http://149.50.150.130:8080" //"http://149.50.142.146:8080";
+const API_URL ="http://localhost:8080" //"http://149.50.150.130:8080";
 
 // Obtener el token almacenado
 const getAuthToken = () => localStorage.getItem("token");

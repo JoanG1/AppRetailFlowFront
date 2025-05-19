@@ -1,23 +1,57 @@
 import React, { useState } from "react";
-import { TextField, Button, Container, Box, Typography, Alert, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Box,
+  Typography,
+  Alert,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { register } from "../services/ApiServices"; 
+import { register } from "../services/ApiServices";
 
 const Register = () => {
   const [username, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState(""); // Estado inicial vacío
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+
+  const validatePassword = (password) => {
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    return hasUppercase && hasSpecialChar && hasNumber;
+  };
+
+  const isPasswordMismatch = confirmPassword.length > 0 && password !== confirmPassword;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
 
+    /*
     if (!role) {
       setError("Por favor, selecciona un rol.");
+      return;
+    }
+*/
+    if (!validatePassword(password)) {
+      setError(
+        "La contraseña debe contener al menos una mayúscula, un número y un carácter especial."
+      );
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden.");
       return;
     }
 
@@ -49,8 +83,10 @@ const Register = () => {
           Registro
         </Typography>
 
-        {error && <Alert severity="error">{"El nombre de usuario ya esta tomado"}</Alert>}
-        {success && <Alert severity="success">Registro exitoso. Redirigiendo...</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
+        {success && (
+          <Alert severity="success">Registro exitoso. Redirigiendo...</Alert>
+        )}
 
         <form onSubmit={handleSubmit} style={{ width: "100%" }}>
           <TextField
@@ -62,8 +98,7 @@ const Register = () => {
             onChange={(e) => setName(e.target.value)}
             required
           />
-          
-          {/* Selector de Rol */}
+{/*
           <FormControl fullWidth margin="normal">
             <InputLabel>Rol</InputLabel>
             <Select
@@ -75,7 +110,7 @@ const Register = () => {
               <MenuItem value="USER">Usuario</MenuItem>
             </Select>
           </FormControl>
-
+*/}
           <TextField
             fullWidth
             label="Contraseña"
@@ -87,12 +122,26 @@ const Register = () => {
             required
           />
 
+          <TextField
+            fullWidth
+            label="Confirmar Contraseña"
+            type="password"
+            margin="normal"
+            variant="outlined"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            error={isPasswordMismatch}
+            helperText={isPasswordMismatch ? "Las contraseñas no coinciden" : ""}
+          />
+
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="success"
             sx={{ mt: 2 }}
+            disabled={isPasswordMismatch}
           >
             Registrarse
           </Button>
@@ -100,7 +149,10 @@ const Register = () => {
 
         <Typography variant="body2" sx={{ mt: 2 }}>
           ¿Ya tienes cuenta?{" "}
-          <Button onClick={() => navigate("/login")} sx={{ textTransform: "none" }}>
+          <Button
+            onClick={() => navigate("/login")}
+            sx={{ textTransform: "none" }}
+          >
             Iniciar Sesión
           </Button>
         </Typography>
@@ -110,4 +162,3 @@ const Register = () => {
 };
 
 export default Register;
-
