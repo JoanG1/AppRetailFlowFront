@@ -18,9 +18,12 @@ const Login = () => {
       const userData = { username, password };
       const response = await login(userData);
       console.log("Autenticación exitosa:", response);
+      console.log("Token: ", response.token)
+      console.log("userId: ", response.usuarioId)
 
       // Guarda el token en localStorage
-    localStorage.setItem("token", response);
+    localStorage.setItem("token", response.token);
+    localStorage.setItem("userId", response.usuarioId);
 
       // Redirigir al dashboard después de iniciar sesión
       navigate("/dashboard");

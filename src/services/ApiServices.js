@@ -145,7 +145,7 @@ export const getBodegas = async () => {
   }
 };
 
-// Obtener bodegas
+// Eliminar bodegas
 export const eliminarBodega  = async (id) => {
   try {
     const response = await api.delete(`/api/bodegas/${id}`);

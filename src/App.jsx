@@ -14,6 +14,7 @@ import Productos from "./components/Productos";
 import Surtidos from "./components/Surtidos";
 import Secciones from "./components/Secciones";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Venta from "./components/Venta";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
       <Route path="/productos" element={<ProtectedRoute><Productos /></ProtectedRoute>} />
       <Route path="/surtidos" element={<ProtectedRoute><Surtidos /></ProtectedRoute>} />
       <Route path="/Secciones/:id" element={<ProtectedRoute><Secciones /></ProtectedRoute>} />
+      <Route path="/venta" element={<ProtectedRoute><Venta /></ProtectedRoute>} />
     </Routes>
   );
 }
