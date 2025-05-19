@@ -19,8 +19,13 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import { useNavigate } from "react-router-dom";
 
-import { getLocales, getProductosConNombrePorLocal } from "../services/ApiServices";
+import {
+  getLocales,
+  getProductosConNombrePorLocalConProductoId,
+  crearVenta,
+} from "../services/ApiServices";
 
 const Venta = () => {
   const [locales, setLocales] = useState([]);
@@ -33,6 +38,7 @@ const Venta = () => {
   const [success, setSuccess] = useState(false);
   const [editandoId, setEditandoId] = useState(null);
   const [cantidadEditada, setCantidadEditada] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLocales = async () => {
@@ -50,7 +56,7 @@ const Venta = () => {
     const fetchProductos = async () => {
       if (!localId) return;
       try {
-        const productos = await getProductosConNombrePorLocal(localId);
+        const productos = await getProductosConNombrePorLocalConProductoId(localId);
         setProductosDisponibles(productos);
       } catch (e) {
         setError("Error al obtener productos del local");
@@ -78,10 +84,7 @@ const Venta = () => {
       setProductos(nuevosProductos);
     } else {
       const productoInfo = productosDisponibles.find((p) => p.id === idNum);
-      setProductos([
-        ...productos,
-        { ...productoInfo, cantidad: cantidadNum },
-      ]);
+      setProductos([...productos, { ...productoInfo, cantidad: cantidadNum }]);
     }
 
     setProductoId("");
@@ -113,7 +116,7 @@ const Venta = () => {
     setProductos(productos.filter((p) => p.id !== id));
   };
 
-  const registrarVenta = () => {
+  const registrarVenta = async () => {
     setError(null);
     setSuccess(false);
 
@@ -136,12 +139,12 @@ const Venta = () => {
 
     try {
       console.log("Enviando venta al backend:", venta);
-      // await crearVenta(venta);
+      await crearVenta(venta);
       setSuccess(true);
       setLocalId("");
       setProductos([]);
     } catch (e) {
-      setError("Error al registrar la venta");
+      setError(e.message || "Error al registrar la venta");
       console.error(e);
     }
   };
@@ -279,6 +282,7 @@ const Venta = () => {
           </>
         )}
 
+        {/* Botón Registrar */}
         <Button
           variant="contained"
           color="success"
@@ -286,6 +290,16 @@ const Venta = () => {
           sx={{ mt: 3 }}
         >
           Registrar Venta
+        </Button>
+
+        {/* Botón Historial debajo */}
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => navigate("/historial")}
+          sx={{ mt: 2 }}
+        >
+          Ver Historial de Ventas
         </Button>
       </Box>
     </Container>

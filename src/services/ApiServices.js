@@ -245,7 +245,33 @@ export const getProductosConNombrePorLocal = async (localId) => {
   return productosCompletos.filter(Boolean); // Filtra los nulls
 };
 
-//Eliminar producto local
+export const getProductosConNombrePorLocalConProductoId = async (localId) => {
+  const productosLocales = await getProductosLocalPorLocal(localId);
+
+  const productosCompletos = await Promise.all(
+    productosLocales.map(async (prodLocal) => {
+      if (!prodLocal?.productoId) {
+        console.warn("Producto local sin producto_id:", prodLocal);
+        return null;
+      }
+
+      try {
+        const producto = await getProductoPorId(prodLocal.productoId);
+        return {
+          id: prodLocal.productoId,
+          stock: prodLocal.stock,
+          nombre: producto.nombre
+        };
+      } catch (error) {
+        console.error(`Error al traer producto con ID ${prodLocal.producto_id}:`, error);
+        return null;
+      }
+    })
+  );
+
+  return productosCompletos.filter(Boolean); // Filtra los nulls
+};
+
 
 // Eliminar un producto local
 export const eliminarProductoLocal = async (productoLocalId) => {
@@ -467,3 +493,27 @@ export const agregarProductoABodega = async ({ productoId, seccionId, stock }) =
     throw error.response?.data || "Error al agregar el producto a la bodega";
   }
 };
+
+export const crearVenta = async(body) => {
+  try{
+
+    const response = await api.post("/ventas", body)
+    return response.data
+    
+  }catch(error){
+    throw error.response?.data || "Error al crear la venta"
+  }
+}
+
+// Obtener historial de ventas
+export const getHistorialVentas = async () => {
+  try {
+    const response = await api.get("/ventas/historial");
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener historial de ventas:", error);
+    throw error;
+  }
+};
+
+
