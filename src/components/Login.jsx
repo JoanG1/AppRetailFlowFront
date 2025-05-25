@@ -48,7 +48,7 @@ const Login = () => {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          Iniciar Sesión
+          Iniciar Sesión Retail
         </Typography>
 
         {error && (
