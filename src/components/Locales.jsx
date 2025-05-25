@@ -19,7 +19,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
-import { crearLocal, getLocales, editarLocal } from "../services/ApiServices";
+import { crearLocal, getLocales, editarLocal, deleteLocal } from "../services/ApiServices";
 
 const Locales = () => {
     const [nombreLocal, setNombreLocal] = useState("");
@@ -64,9 +64,19 @@ const Locales = () => {
         setTimeout(() => setMensaje(""), 3000);
     };
 
-    const eliminarLocal = (id) => {
-        setLocales((prev) => prev.filter((local) => local.id !== id));
+    const eliminarLocal = async (id) => {
+        try {
+            await deleteLocal(id);
+            setLocales((prev) => prev.filter((local) => local.id !== id));
+            setMensaje("✅ Local eliminado correctamente.");
+        } catch (error) {
+            console.error("Error al eliminar local:", error);
+            setMensaje("❌ Error al eliminar el local.");
+        }
+
+        setTimeout(() => setMensaje(""), 3000);
     };
+
 
     const abrirModalEdicion = (local) => {
         setLocalAEditar(local);

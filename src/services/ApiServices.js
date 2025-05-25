@@ -516,10 +516,21 @@ export const getHistorialVentas = async () => {
   }
 };
 
-// Obtener historial de ventas
+// eliminacion de seccion
 export const deleteSeccion = async (id) => {
   try {
     const response = await api.delete(`/api/secciones/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar seccion de ventas:", error);
+    throw error;
+  }
+};
+
+// eliminacion de seccion
+export const deleteLocal = async (id) => {
+  try {
+    const response = await api.delete(`/api/Locales/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error al eliminar seccion de ventas:", error);
