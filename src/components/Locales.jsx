@@ -117,7 +117,7 @@ const Locales = () => {
                     <Button
                         variant="outlined"
                         startIcon={<ArrowBackIcon />}
-                        onClick={() => window.history.back()}
+                        onClick={() => navigate("/dashboard")}
                     >
                         Volver
                     </Button>
