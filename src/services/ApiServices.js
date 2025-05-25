@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // URL base de la API
-const API_URL = "http://149.50.150.130:8080" //"http://localhost:8080" //;
+const API_URL = "http://localhost:8080" //"http://149.50.150.130:8080" // //;
 
 // Obtener el token almacenado
 const getAuthToken = () => localStorage.getItem("token");
@@ -512,6 +512,17 @@ export const getHistorialVentas = async () => {
     return response.data;
   } catch (error) {
     console.error("Error al obtener historial de ventas:", error);
+    throw error;
+  }
+};
+
+// Obtener historial de ventas
+export const deleteSeccion = async (id) => {
+  try {
+    const response = await api.delete(`/api/secciones/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar seccion de ventas:", error);
     throw error;
   }
 };

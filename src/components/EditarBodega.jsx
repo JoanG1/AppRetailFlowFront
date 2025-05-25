@@ -26,6 +26,7 @@ import {
     eliminarBodega,
     getSeccionesPorBodega,
     crearSeccion,
+    deleteSeccion
 } from "../services/ApiServices";
 
 const EditarBodega = () => {
@@ -101,6 +102,20 @@ const EditarBodega = () => {
         });
         // Aquí puedes hacer un PUT a la API si lo deseas
     };
+
+    const handleEliminarSeccion = async (seccionId) => {
+        try {
+            await deleteSeccion(seccionId);
+            setSeccionesBodega((prev) => prev.filter((s) => s.id !== seccionId));
+            setMensaje("✅ Sección eliminada correctamente.");
+        } catch (error) {
+            console.error("Error al eliminar la sección:", error);
+            setMensaje("❌ No se pudo eliminar la sección.");
+        }
+
+        setTimeout(() => setMensaje(""), 5000);
+    };
+
 
     const bodegasFiltradas = bodegas.filter((b) =>
         b.nombre.toLowerCase().includes(busqueda.toLowerCase())
@@ -221,8 +236,8 @@ const EditarBodega = () => {
                                             }}
                                             onClick={() =>
                                                 navigate(`/secciones/${seccion.id}`, {
-                                                state: { seccion },
-                                            })
+                                                    state: { seccion },
+                                                })
                                             }
                                         >
                                             <Typography className="nombre-seccion">
@@ -231,9 +246,17 @@ const EditarBodega = () => {
                                             <IconButton size="small" color="primary" disabled>
                                                 <EditIcon fontSize="small" />
                                             </IconButton>
-                                            <IconButton size="small" color="error" disabled>
+                                            <IconButton
+                                                size="small"
+                                                color="error"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleEliminarSeccion(seccion.id);
+                                                }}
+                                            >
                                                 <DeleteIcon fontSize="small" />
                                             </IconButton>
+
                                         </Paper>
                                     ))
                                 ) : (
