@@ -1,0 +1,40 @@
+name: Build Frontend and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+
+      - name: Log in to Docker Hub
+        run: echo dckr_pat_hS0f1aMwMm87VNkY841Qoeja00w | docker login -u joang1 --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t joang1/ideaprojects-frontend:latest .
+
+      - name: Push Docker image
+        run: docker push joang1/ideaprojects-frontend:latest
