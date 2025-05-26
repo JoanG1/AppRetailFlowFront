@@ -83,9 +83,9 @@ const Register = () => {
           Registro
         </Typography>
 
-        {error && <Alert severity="error">{error}</Alert>}
+        {error && <Alert severity="error" data-testid="alerta-error" id="alerta-error">{error}</Alert>}
         {success && (
-          <Alert severity="success">Registro exitoso. Redirigiendo...</Alert>
+          <Alert severity="success" data-testid="alerta-exito" id="alerta-exito">Registro exitoso. Redirigiendo...</Alert>
         )}
 
         <form onSubmit={handleSubmit} style={{ width: "100%" }}>
@@ -97,6 +97,7 @@ const Register = () => {
             value={username}
             onChange={(e) => setName(e.target.value)}
             required
+            id="input-usuario"
           />
 {/*
           <FormControl fullWidth margin="normal">
@@ -120,6 +121,7 @@ const Register = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            id="input-clave"
           />
 
           <TextField
@@ -133,9 +135,11 @@ const Register = () => {
             required
             error={isPasswordMismatch}
             helperText={isPasswordMismatch ? "Las contraseñas no coinciden" : ""}
+            id="input-confirmar-clave"
           />
 
           <Button
+            id="boton-registro"
             type="submit"
             fullWidth
             variant="contained"
@@ -150,6 +154,7 @@ const Register = () => {
         <Typography variant="body2" sx={{ mt: 2 }}>
           ¿Ya tienes cuenta?{" "}
           <Button
+            id="boton-ir-login"
             onClick={() => navigate("/login")}
             sx={{ textTransform: "none" }}
           >
