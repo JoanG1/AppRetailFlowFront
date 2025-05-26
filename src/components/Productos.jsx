@@ -28,7 +28,6 @@ const Productos = () => {
     const [productos, setProductos] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Obtener productos al montar el componente
     useEffect(() => {
         const cargarProductos = async () => {
             try {
@@ -81,6 +80,7 @@ const Productos = () => {
                         variant="outlined"
                         startIcon={<ArrowBackIcon />}
                         onClick={() => navigate(-1)}
+                        id="boton-volver"
                     >
                         Volver
                     </Button>
@@ -92,6 +92,7 @@ const Productos = () => {
 
                 <Box component="form" onSubmit={handleSubmit} noValidate>
                     <TextField
+                        id="input-nombre-producto"
                         fullWidth
                         label="Nombre del producto"
                         value={nombre}
@@ -99,6 +100,7 @@ const Productos = () => {
                         margin="normal"
                     />
                     <TextField
+                        id="input-precio-producto"
                         fullWidth
                         label="Precio"
                         type="number"
@@ -109,17 +111,18 @@ const Productos = () => {
                     />
 
                     {error && (
-                        <Alert severity="error" sx={{ mt: 2 }}>
+                        <Alert id="alerta-error-producto" severity="error" sx={{ mt: 2 }}>
                             {error}
                         </Alert>
                     )}
                     {mensaje && (
-                        <Alert severity="success" sx={{ mt: 2 }}>
+                        <Alert id="alerta-exito-producto" severity="success" sx={{ mt: 2 }}>
                             {mensaje}
                         </Alert>
                     )}
 
                     <Button
+                        id="boton-crear-producto"
                         type="submit"
                         variant="contained"
                         color="primary"
@@ -144,7 +147,7 @@ const Productos = () => {
                     <Typography>No hay productos disponibles.</Typography>
                 ) : (
                     <TableContainer component={Paper}>
-                        <Table size="small">
+                        <Table size="small" id="tabla-productos">
                             <TableHead>
                                 <TableRow>
                                     <TableCell><strong>ID</strong></TableCell>
