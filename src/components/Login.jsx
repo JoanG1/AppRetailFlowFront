@@ -52,7 +52,7 @@ const Login = () => {
         </Typography>
 
         {error && (
-          <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
+          <Alert severity="error" sx={{ width: "100%", mb: 2 }} data-testid="alerta-error">
             {error}
           </Alert>
         )}
@@ -66,6 +66,7 @@ const Login = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            id="input-usuario"
           />
           <TextField
             fullWidth
@@ -76,6 +77,7 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            id="input-clave"
           />
           <Button
             type="submit"
@@ -83,6 +85,8 @@ const Login = () => {
             variant="contained"
             color="primary"
             sx={{ mt: 2 }}
+            id="boton-login"
+            data-testid="boton-login"
           >
             Iniciar Sesión
           </Button>
