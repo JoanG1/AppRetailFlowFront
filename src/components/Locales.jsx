@@ -77,7 +77,6 @@ const Locales = () => {
         setTimeout(() => setMensaje(""), 3000);
     };
 
-
     const abrirModalEdicion = (local) => {
         setLocalAEditar(local);
         setNombreEditado(local.nombre);
@@ -115,6 +114,7 @@ const Locales = () => {
             <Container maxWidth="md" sx={{ mt: 4 }}>
                 <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
                     <Button
+                        id="boton-volver-locales"
                         variant="outlined"
                         startIcon={<ArrowBackIcon />}
                         onClick={() => navigate("/dashboard")}
@@ -129,6 +129,7 @@ const Locales = () => {
 
                 {mensaje && (
                     <Alert
+                        id="alerta-local-mensaje"
                         severity={mensaje.startsWith("✅") ? "success" : "warning"}
                         sx={{ mb: 2 }}
                     >
@@ -138,6 +139,7 @@ const Locales = () => {
 
                 <Paper sx={{ p: 3, mb: 4 }}>
                     <TextField
+                        id="input-nombre-local"
                         fullWidth
                         label="Nombre del Local"
                         variant="outlined"
@@ -147,6 +149,7 @@ const Locales = () => {
                     />
 
                     <Button
+                        id="boton-agregar-local"
                         variant="contained"
                         color="primary"
                         fullWidth
@@ -165,6 +168,7 @@ const Locales = () => {
                     {locales.map((local) => (
                         <Grid item xs={12} sm={6} md={4} key={local.id}>
                             <Paper
+                                id={`tarjeta-local-${local.id}`}
                                 elevation={3}
                                 sx={{
                                     p: 2,
@@ -211,6 +215,7 @@ const Locales = () => {
                     <DialogTitle>Editar Nombre del Local</DialogTitle>
                     <DialogContent>
                         <TextField
+                            id="input-editar-nombre-local"
                             fullWidth
                             label="Nuevo Nombre"
                             variant="outlined"
@@ -224,6 +229,7 @@ const Locales = () => {
                             Cancelar
                         </Button>
                         <Button
+                            id="boton-guardar-edicion-local"
                             onClick={guardarNombreEditado}
                             variant="contained"
                             color="primary"
