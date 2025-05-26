@@ -1,3 +1,25 @@
+import React, { useState } from "react";
+import {
+    Container,
+    Typography,
+    TextField,
+    Button,
+    Box,
+    Paper,
+    Alert,
+    Fade,
+    List,
+    ListItem,
+    ListItemText,
+    IconButton,
+    Divider,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
+import { crearBodega, crearBodegaConSecciones } from "../services/ApiServices";
+
 // (...) imports iguales que antes
 
 const Bodegas = () => {
