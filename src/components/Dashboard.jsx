@@ -1,3 +1,44 @@
+import React, { useEffect, useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  IconButton,
+  Slide,
+  Fade,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom";
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import {
+  obtenerTotalBodegas,
+  obtenerTotalLocales,
+  obtenerTotalProductos,
+  obtenerTotalSurtidos,
+  obtenerTopProductos,
+  obtenerSurtidosConProductos,
+} from "../services/ApiServices";
+
 // (...) imports igual que antes
 
 const Dashboard = () => {
