@@ -20,19 +20,74 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import { crearBodega, crearBodegaConSecciones } from "../services/ApiServices";
 
-// (...) imports iguales que antes
-
 const Bodegas = () => {
-  const [nombreBodega, setNombreBodega] = useState("");
-  const [mostrarSecciones, setMostrarSecciones] = useState(false);
-  const [seccionesSeleccionadas, setSeccionesSeleccionadas] = useState([]);
-  const [nombreNuevaSeccion, setNombreNuevaSeccion] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const navigate = useNavigate();
+    const [nombreBodega, setNombreBodega] = useState("");
+    const [mostrarSecciones, setMostrarSecciones] = useState(false);
+    const [seccionesSeleccionadas, setSeccionesSeleccionadas] = useState([]);
+    const [nombreNuevaSeccion, setNombreNuevaSeccion] = useState("");
+    const [mensaje, setMensaje] = useState("");
+    const navigate = useNavigate();
 
-  // (...) lógica idéntica a antes
+    const agregarSeccion = () => {
+        const nombre = nombreNuevaSeccion.trim();
+        if (!nombre) return;
+        if (seccionesSeleccionadas.includes(nombre)) return;
 
-  return (
+        setSeccionesSeleccionadas((prev) => [...prev, nombre]);
+        setNombreNuevaSeccion("");
+    };
+
+    const eliminarSeccion = (nombre) => {
+        setSeccionesSeleccionadas((prev) => prev.filter((s) => s !== nombre));
+    };
+
+    const handleCrearBodega = async () => {
+        const nuevaBodega = { nombre: nombreBodega };
+        try {
+            const response = await crearBodega(nuevaBodega);
+            console.log("Bodega creada:", response);
+            setMensaje("✅ ¡Bodega creada exitosamente sin secciones!");
+            resetFormulario();
+        } catch (error) {
+            setMensaje(`❌ Error: ${error}`);
+        }
+    };
+
+    const handleCrearBodegaSecciones = async () => {
+        const nuevaBodega = {
+            nombre: nombreBodega,
+            secciones: seccionesSeleccionadas,
+        };
+        try {
+            const response = await crearBodegaConSecciones(nuevaBodega);
+            console.log("Bodega con secciones creada:", response);
+            setMensaje("✅ ¡Bodega creada exitosamente con secciones asignadas!");
+            resetFormulario();
+        } catch (error) {
+            setMensaje(`❌ Error: ${error}`);
+        }
+    };
+
+    const handleSubmit = () => {
+        if (mostrarSecciones) {
+            if (seccionesSeleccionadas.length === 0) {
+                setMensaje("⚠️ Debes agregar al menos una sección.");
+                return;
+            }
+            handleCrearBodegaSecciones();
+        } else {
+            handleCrearBodega();
+        }
+    };
+
+    const resetFormulario = () => {
+        setNombreBodega("");
+        setSeccionesSeleccionadas([]);
+        setNombreNuevaSeccion("");
+        setMostrarSecciones(false);
+    };
+
+    return (
     <Fade in={true} timeout={500}>
       <Container maxWidth="sm" sx={{ mt: 5 }}>
         <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
